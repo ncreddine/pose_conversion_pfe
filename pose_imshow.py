@@ -148,8 +148,17 @@ class Dataset :
                         datum.cvInputData = np.array(image)
                         self.openpose.emplaceAndPop(op.VectorDatum([datum]))
                         output = datum.poseKeypoints
-
+                        # 
+                        ax.axes.xaxis.set_visible(False)
+                        ax.axes.yaxis.set_visible(False)
+                        fig.tight_layout()
+                        artist = ax.imshow(datum.cvOutputData, animated=True)
+                        cv.imwrite(f'./frames/frame{len(artists) + 1}.jpg', datum.cvOutputData)
+                        artists.append([artist])
                         pbar.update(1)
+                ani = animation.ArtistAnimation(fig, artists, interval=20, blit=True, repeat_delay=200)
+                ani.save('./animation.gif', writer='imagemagick', fps=30)
+                plt.show()
                 break
             break
 

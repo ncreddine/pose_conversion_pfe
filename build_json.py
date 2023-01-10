@@ -62,7 +62,7 @@ def sort_to_json(df, unavailable):
             speaker_dict.update({ speaker : links_dict })
         DATASET.update({ _set : speaker_dict })
     my_data_json = json.dumps(DATASET, indent  = 4)
-    with open('data.json', 'w') as f :
+    with open('data.json', 'w') as f :p 
         f.write(my_data_json)
         
 
