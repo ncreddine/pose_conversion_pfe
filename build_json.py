@@ -4,6 +4,7 @@ from datetime import time
 from datetime import timedelta
 import json
 import tqdm
+import h5py
 
 #i convert date time into time object
 def get_time(isoformat):
@@ -36,7 +37,7 @@ def get_deltatime(isoformat):
 
 SPEAKERS_  = ["almaram", "angelica", "chemistry", "conan", "ellen", "jon", "oliver", "rock", "seth", "shelly", "maher", "huckabee", "fallon", "lec_cosmic", "colbert", "corden", "lec_evol", "minhaj", "bee", "lec_law", "ytch_dating", "lec_hist", "ytch_charisma", "ytch_prof", "ferguson", "noah"]
 
-def sort_to_json(df):
+def sort_to_json(df, unavailable):
     DATASET = {}
     for _set in ['train', 'test', 'dev'] :
         cond_set = df['dataset'] == _set
@@ -55,8 +56,7 @@ def sort_to_json(df):
                 end_time   = subsub_df['end_time'].apply(lambda x :   get_time(x.split(' ')[1]))
                 delta_time = subsub_df['delta_time'].apply(lambda x : x)
                 interval_id = subsub_df['interval_id']
-                # timecodes  = list(zip( interval_id , zip(start_time, end_time,delta_time)))
-                timecodes  = { id_ : { 'start_time' : st_ , 'end_time' : ed_ , 'delta_time' : dt_ } for id_, st_, ed_, dt_ in zip(interval_id, start_time, end_time,delta_time) }
+                timecodes  = { id_ : { 'start_time' : st_ , 'end_time' : ed_ , 'delta_time' : dt_ } for id_, st_, ed_, dt_ in zip(interval_id, start_time, end_time,delta_time) if id_ not in unavailable }
                 links_dict.update({link : timecodes})
                 # 
             speaker_dict.update({ speaker : links_dict })
@@ -67,9 +67,10 @@ def sort_to_json(df):
         
 
 class Dataset: 
-    def __init__(self, filename) :
-        intervals = pd.read_csv("./cmu_intervals_df.csv")
-
+    def __init__(self, filename, interals) :
+        intervals = pd.read_csv(filename)
+        unavailable = h5py.File(interals)
+        unavailable = list(unavailable['intervals'])
         # varnames = intervals.head(0)
         # for x in varnames :
         #     exec("self." + x  + " = []")
@@ -81,8 +82,9 @@ class Dataset:
         # self.video_fn
         # self.video_link
 
-        sort_to_json(intervals)
+        sort_to_json(intervals, unavailable)
 
 
 
-dataset = Dataset("./cmu_intervals_df.csv")
+dataset = Dataset("../_ARCHIVE/cmu_intervals_df.csv", '../_ARCHIVE/missing_intervals.h5')
+
