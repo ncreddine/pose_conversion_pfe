@@ -150,7 +150,7 @@ class Dataset :
                 fig, ax = plt.subplots(num="VideoClipReader output")
                 artists = []
                 # for timestamp, frame in frame_reader:
-                with tqdm(range(60), ncols = 100, desc ="extraction\t") as pbar :
+                with tqdm(range(NUM_FRAMES), ncols = 100, desc ="Extraction\t") as pbar :
                     for timestamp, frame in frame_reader :
                         if (len(artists)) == 60:
                             break
