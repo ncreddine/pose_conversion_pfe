@@ -1,8 +1,7 @@
-# Import Openpose
-import sys
-sys.path.append('./openpose/build/python')
-from openpose import pyopenpose as op
-from multiprocessing import Pool
+import mediapipe as mp
+mp_drawing = mp.solutions.drawing_utils
+mp_drawing_styles = mp.solutions.drawing_styles
+mp_pose = mp.solutions.pose
 
 import json
 import cv2 as cv
@@ -24,29 +23,16 @@ import pathlib
 def download_video(url, filename):
     """Download youtube video. Ensure it has a unique hour and minute timestamp , and rsync to the youtube library folder."""
     ydl_opts = {
-        # 'match_filter': utils.match_filter_func("!is_live"),
-        # 'match_filter': utils.match_filter_func("!was_live"),
         "no_warnings": True,
         "overwrites": False,
         "restrictfilenames": True,
-        "noprogress": False,
-        # "ffmpeg-location": ffmpeg_file,
+        "noprogress": True,
         "prefer_ffmpeg": True,
-        #"download_archive": "youtube_download_archive.log",
-        # "cookiefile": cookies_file,
         "outtmpl" : filename,
         # "postprocessors": [ 
         #     {
         #         'key':'FFmpegMetadata',
         #         'add_metadata': True,
-        #     },
-        #     { 
-        #         "key":"Exec",
-        #         "exec_cmd": f"touch -m -t %(release_date,upload_date,modified_date|NA)s '%(filepath)s'",
-        #     },
-        #     { 
-        #         "key":"Exec",
-        #         "exec_cmd": "rsync --protect-args --remove-source-files -Rtvz '%(filepath)s' user@fileserver:/mnt/zpool-media2/youtube/",
         #     },
         # ]
     }
@@ -81,20 +67,16 @@ class Dataset :
         self.data  = json.load(self.file_)
 
         # Create a dumping download file
-        self._downloads = pathlib.Path('./downloads')
+        self._downloads = pathlib.Path('./_downloads')
         if not self._downloads.exists() : 
             self._downloads.mkdir()
 
-        # Openpose
-        ## Extraction Params
-        params = dict()
-        params["model_folder"] = "./openpose/models/"
-        params["face"] = False
-        params["hand"] = True
-        ## Conf wrapper
-        self.openpose = op.WrapperPython()
-        self.openpose.configure(params)
-        self.openpose.start()
+        # Mediapipe pose
+        self.pose =  mp_pose.Pose( static_image_mode=False, model_complexity=2, enable_segmentation=True, min_detection_confidence=0.3) 
+
+        # Build the dataset
+        self.build_dataset()
+        
 
 
     def build_dataset(self):
@@ -121,18 +103,6 @@ class Dataset :
             testset.mkdir()
         self.build_subset(testset, 'test')
 
-    def extract_pose(frame_) :
-        print(frame_)
-        # timestamp, frame = frame_
-        # pixels = copy(frame.pixels)
-        # # Plot output
-        # image = Image.fromarray(pixels)
-        # datum = op.Datum()
-        # datum.cvInputData = np.array(image)
-        # self.openpose.emplaceAndPop(op.VectorDatum([datum]))
-        # return np.array(self.openpose.cvOutputData)
-        return frame_ * frame_
-
     def for_speaker(self, speaker, subset, name_subset):
         link_set = self.data[name_subset][speaker]
         # Each link
@@ -155,28 +125,29 @@ class Dataset :
                 # clip the window
                 frame_reader = VideoClipReader(VIDEO_PATH,  get_timedelta(start_time), get_timedelta(end_time)) # src : https://stonesoup.readthedocs.io/en/v0.1b5/auto_demos/Video_Processing.html
                 NUM_FRAMES = len(list(frame_reader.clip.iter_frames()))
-                # ---- Plot each frame ---- # 
+                # ---- t the intervals of the video ---- # 
                 fig, ax = plt.subplots(num="VideoClipReader output")
-                artists = []
+                pose = []
                 # for timestamp, frame in frame_reader:
-                #with tqdm(range(60), ncols = 100, desc ="extraction\t") as pbar :
-                with Pool() as pool :
-                    output = pool.imap(self.extract_pose, range(1000))
-                    for i in output : 
-                        print(i)
-                            #if (len(artists)) == 60:
-                            #    break
-                            ##for output in results :
-                            #ax.axes.xaxis.set_visible(False)
-                            #ax.axes.yaxis.set_visible(False)
-                            #fig.tight_layout()
-                            #artist = ax.imshow(frame, animated=True)
-                            #cv.imwrite(f'./frames/frame{len(artists) + 1}.jpg', datum.cvOutputData)
-                            #artists.append([artist])
-                        # pbar.update(1)
-                # ani = animation.ArtistAnimation(fig, artists, interval=20, blit=True, repeat_delay=200)
-                # ani.save('./animation.gif', writer='imagemagick', fps=30)
-                # plt.show()
+                with tqdm(range(NUM_FRAMES), ncols = 100, desc ="Extraction\t") as pbar :
+                    for timestamp, frame in frame_reader :
+                        # Read the frame pixels
+                        pixels = copy(frame.pixels)
+                        # Plot output
+                        image = cv.resize(np.array(pixels), (640, 480))
+                        results = self.pose.process(cv.cvtColor(image, cv.COLOR_BGR2RGB))
+                        pbar.update(1)
+                        mp_drawing.draw_landmarks(
+                            image,
+                            results.pose_landmarks,
+                            mp_pose.POSE_CONNECTIONS,
+                            landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
+                        # Plot pose world landmarks.
+                        # mp_drawing.plot_landmarks(
+                        #     results.pose_world_landmarks, mp_pose.POSE_CONNECTIONS)
+                        cv.imshow('MediaPipe Face Detection', cv.flip(image, 1))
+                        if cv.waitKey(5) & 0xFF == 27:
+                          break
                 break
             break
 
@@ -185,26 +156,7 @@ class Dataset :
         # create subsets
         pose_2d = subset / "pose_2d"
         pose_3d = subset / "pose_3d"
-        speaker_set = self.data[name_subset]
         # Each speaker
-        self.for_speaker("oliver", subset, name_subset)
+        self.for_speaker("conan", subset, name_subset)
 
-# if __name__ == '__main__' :
-#     dataset = Dataset("./data/data.json" , "./data/bee")  
-#     dataset.build_dataset()
-
-
-
-def f(x):
-    return x*x
-
-if __name__ == '__main__':
-    # start 4 worker processes
-    with Pool(processes=4) as pool:
-
-        # print "[0, 1, 4,..., 81]"
-        print(pool.map(f, range(1000000)))
-
-        # print same numbers in arbitrary order
-        for i in pool.imap_unordered(f, range(1000000)):
-            print(i)
+dataset = Dataset("./metadata.json", ".")
