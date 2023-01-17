@@ -20,9 +20,13 @@ from matplotlib import animation
 import os
 import pathlib
 
+def framerate(info, * incomplete) :
+    return info.get('fps')
+
 def download_video(url, filename):
     """Download youtube video. Ensure it has a unique hour and minute timestamp , and rsync to the youtube library folder."""
     ydl_opts = {
+        'match_filter': framerate,
         "no_warnings": True,
         "overwrites": False,
         "restrictfilenames": True,
@@ -38,6 +42,7 @@ def download_video(url, filename):
     }
     try:
         with YoutubeDL(ydl_opts) as ydl:
+
             ydl.download(url)
     except Exception as e: 
         if isinstance(e, DownloadError):
@@ -137,6 +142,7 @@ class Dataset :
                 fig, ax = plt.subplots(num="VideoClipReader output")
                 artists = []
                 # for timestamp, frame in frame_reader:
+
                 with tqdm(range(NUM_FRAMES), ncols = 100, desc ="Extraction\t") as pbar :
                     for timestamp, frame in frame_reader :
                         # Read the frame pixels
@@ -153,7 +159,7 @@ class Dataset :
                         ax.axes.yaxis.set_visible(False)
                         fig.tight_layout()
                         artist = ax.imshow(datum.cvOutputData, animated=True)
-                        cv.imwrite(f'./frames/frame{len(artists) + 1}.jpg', datum.cvOutputData)
+                        # cv.imwrite(f'./frames/frame{len(artists) + 1}.jpg', datum.cvOutputData)
                         artists.append([artist])
                         pbar.update(1)
                 ani = animation.ArtistAnimation(fig, artists, interval=20, blit=True, repeat_delay=200)
