@@ -57,12 +57,14 @@ def sort_to_json(df, unavailable):
                 delta_time = subsub_df['delta_time'].apply(lambda x : x)
                 interval_id = subsub_df['interval_id']
                 timecodes  = { id_ : { 'start_time' : st_ , 'end_time' : ed_ , 'delta_time' : dt_ } for id_, st_, ed_, dt_ in zip(interval_id, start_time, end_time,delta_time) if id_ not in unavailable }
-                links_dict.update({link : timecodes})
-                # 
-            speaker_dict.update({ speaker : links_dict })
-        DATASET.update({ _set : speaker_dict })
+                if len(timecodes) !=0 :
+                    links_dict.update({link : timecodes})
+            if len(links_dict) !=0 :
+                speaker_dict.update({ speaker : links_dict })
+        if len(speaker_dict) != 0 :
+            DATASET.update({ _set : speaker_dict })
     my_data_json = json.dumps(DATASET, indent  = 4)
-    with open('data.json', 'w') as f :p 
+    with open('metadata.json', 'w') as f :
         f.write(my_data_json)
         
 
