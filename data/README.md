@@ -11,7 +11,7 @@ The data preparation is divided into to steps :
  - Apply `mediapipe` hollistic extractor for each video interval to get the 3D pose of the speaker
  
  
- ## metadata
+ ## metadata
  
  The file `build_json.py` converts the provided `cmu_intervals_df.csv` file in PATS, to  a`metadata.json`  file. This file is sorted like so :
  
