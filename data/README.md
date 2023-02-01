@@ -6,7 +6,7 @@ The [Pose, Audio, Transcript, Style (PATS)](https://chahuja.com/pats/) was initi
 This dataset is constituted of 22 speakers, with more than 251 hours of video and about 84 000 annotated intervals in total. Since only 2D poses are included in the dataset we need to extract 3d pose from the detaset videos. The dataset doesn't directly include videos, but they are referenced as  links to download.
 
 The data preparation is divided into to steps :
- - Create a `metadata.json` file that regroups all the intevals for each link.
+ - Create a compact `metadata.json` file that regroups all the intevals for each link.
  - Download each video through the provided link and clip it.
  - Apply `mediapipe` hollistic extractor for each video interval to get the 3D pose of the speaker
  
