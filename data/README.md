@@ -11,24 +11,15 @@ The data preparation is divided into to steps :
  - Apply `mediapipe` hollistic extractor for each video interval to get the 3D pose of the speaker
  
  
- ## metadata
+ ## Convert to JSON
+The first step is to execute the `csv_to_JSON.py` file. This converts the provided `cmu_intervals_df.csv`, where links to each speaker and their `interval_ids` are stored, to a json file more readable and easier to execute for our next step. The following command does what we described above :
+```
+   ./csv_to_JSON.py --intervals path/to/cmu_intervals_df.csv \
+                    --missing   path/to/missing_intervals.h5 \
+                    --output    where/to/store/sorted.json
+```
  
- The file `build_json.py` converts the provided `cmu_intervals_df.csv` file in PATS, to  a`metadata.json`  file. This file is sorted like so :
- 
- 
- ```
- set (train, test, dev) {
-      speaker (22 speakers) {
-          link {
-              interval_id {
-                    "start_time" : 
-                    "end_time"   : 
-                    "delta_time" : 
-              },
-          },
-      },
- },
- ```
+ ## Extract 3D poses
  
 ---
 ```
