@@ -1,4 +1,4 @@
-./data/bee
-./_ARCHIVE
-./openpose
+./data/missing_intervals
+./data/cmu_intervals_df.csv
 ./_downloads
+./dataset
