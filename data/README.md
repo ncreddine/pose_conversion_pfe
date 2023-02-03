@@ -18,8 +18,12 @@ The first step is to execute the `csv_to_JSON.py` file. This converts the provid
                     --missing    path/to/missing_intervals.h5 \
                     --output     where/to/store/sorted.json
 ```
+
 ## Extract 3D poses
-The data we will train our model on are the 2D poses that are included in the dataset, and this to predict the 3D poses from them. Since only the 2D poses are annotated in the dataset, we need to extract 3D poses from the PATS videos. We choose to use mediapipe's (holistic)[https://google.github.io/mediapipe/solutions/holistic.html] ectracto that extracts the 
+
+The data we will train our model on are the 2D poses that are included in the dataset, and this to predict the 3D poses from them. Since only the 2D poses are annotated in the dataset, we need to extract 3D poses from the PATS videos. We choose to use mediapipe's (holistic)[https://google.github.io/mediapipe/solutions/holistic.html] to extract the 3D poses we need that matchs the PATS annotations. 
+
+
 ---
 ```
 [1] Chaitanya Ahuja, Dong Won Lee, Yukiko I. Nakano, and Louis-Philippe Morency. "Style Transfer for Co-Speech 
