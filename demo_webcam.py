@@ -154,5 +154,5 @@ class Demo:
             pose  =      np.array([(p.x, p.y, p.z) for p in results.pose_landmarks.landmark])
         return pose, right_hand, left_hand
         
-demo = Demo('./conv_pose.tflite', num_threads = 6)
+demo = Demo('./models/gcn.tflite', num_threads = 6)
 demo.draw()
