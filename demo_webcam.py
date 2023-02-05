@@ -94,7 +94,7 @@ class Demo:
             predicted = self.infer_model(x)
 
             self.axis[1], _ = draw_poses(self.axis[1], [], predicted, default_skeleton, color = "red", label = "ours")
-            self.axis[1], _ = draw_poses(self.axis[1], [], data.flatten(), default_skeleton, color = "blue", label = "mediapipe")
+            self.axis[1], _ = draw_poses(self.axis[1], [], data.flatten(), default_skeleton, color = "blue", label = "GT using mediapipe")
             self.axis[1].legend()
 
     def infer_model(self, data) :
@@ -110,9 +110,16 @@ class Demo:
 
     def adapt_skeleton(self, _pose3d, _handR, _handL, shape):
         height, width = shape[:2]
-        _pose3d *= [width, height, width]
-        _handR  *= [width, height, width]
-        _handL  *= [width, height, width]
+        ## Substract hand origin
+        _handR  -= [1, 1, _handR[0,2]]
+        _handL  -= [1, 1, _handL[0,2]]
+        ## Scale the hand
+        f = 4
+        _handR  *= [1, 1, f]
+        _handL  *= [1, 1, f]
+        ## Add wrist distance
+        _handR  += [1, 1, _pose3d[16,2]]
+        _handL  += [1, 1, _pose3d[15,2]]
         #  create new list
         new_pose = []
         #  add neck
@@ -154,5 +161,5 @@ class Demo:
             pose  =      np.array([(p.x, p.y, p.z) for p in results.pose_landmarks.landmark])
         return pose, right_hand, left_hand
         
-demo = Demo('./models/gcn.tflite', num_threads = 6)
+demo = Demo('./models/conv_pose_0.5.tflite', num_threads = 6)
 demo.draw()
