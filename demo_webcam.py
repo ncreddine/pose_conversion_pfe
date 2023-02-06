@@ -1,17 +1,17 @@
-import mediapipe as mp
-mp_drawing = mp.solutions.drawing_utils
-mp_drawing_styles = mp.solutions.drawing_styles
-mp_holistic = mp.solutions.holistic
-import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
-import cv2 as cv
-import numpy as np
+import matplotlib.pyplot as plt
 import tensorflow as tf
+import numpy as np
+import cv2 as cv
 import copy
 
+from data.utils import skeleton_connections
 
-PARENTS = [-1, 0, 1, 2, 0, 4, 5, 0, 7, 7, 6, 10, 11, 12, 13, 10, 15, 16, 17, 10, 19, 20, 21, 10, 23, 24, 25, 10, 27, 28, 29, 3, 31, 32, 33, 34, 31, 36, 37, 38, 31, 40, 41, 42, 31, 44, 45, 46, 31, 48, 49, 50] # colors = ((255, 0, 0), (255, 0, 255), (170, 0, 255), (255, 0, 85), (255, 0, 170), (85, 255, 0),
-default_skeleton = list(zip(range(len(PARENTS)), PARENTS))[1:]
+import mediapipe as mp
+mp_drawing_styles = mp.solutions.drawing_styles
+mp_drawing = mp.solutions.drawing_utils
+mp_holistic = mp.solutions.holistic
+
 
 def length(A):
     return np.linalg.norm(A)
@@ -47,7 +47,7 @@ class Demo:
                      self.fig.add_subplot(122, projection='3d')]
         self.fig.tight_layout()
 
-        # start video
+        # start video capture
         self.cap = cv.VideoCapture(0)
 
         # interractive mode
@@ -68,7 +68,7 @@ class Demo:
         axis.set_yticks([])
         axis.set_zticks([])
 
-    def draw(self):
+    def start(self):
         self.anim = FuncAnimation(self.fig, self.animate,interval = 1, blit = False)
         plt.pause(0)
 
@@ -93,8 +93,8 @@ class Demo:
             x  = data[:,:2].reshape(1, 52, 2)
             predicted = self.infer_model(x)
 
-            self.axis[1], _ = draw_poses(self.axis[1], [], predicted, default_skeleton, color = "red", label = "ours")
-            self.axis[1], _ = draw_poses(self.axis[1], [], data.flatten(), default_skeleton, color = "blue", label = "GT using mediapipe")
+            self.axis[1], _ = draw_poses(self.axis[1], [], predicted, skeleton_connections(), color = "red", label = "ours")
+            self.axis[1], _ = draw_poses(self.axis[1], [], data.flatten(), skeleton_connections(), color = "blue", label = "GT using mediapipe")
             self.axis[1].legend()
 
     def infer_model(self, data) :
@@ -161,5 +161,6 @@ class Demo:
             pose  =      np.array([(p.x, p.y, p.z) for p in results.pose_landmarks.landmark])
         return pose, right_hand, left_hand
         
-demo = Demo('./models/linear_model.tflite', num_threads = 6)
-demo.draw()
+if __name__ == '__main__':
+    demo = Demo('./models/linear_model.tflite', num_threads = 6)
+    demo.start()
