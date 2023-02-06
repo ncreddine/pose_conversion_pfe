@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from utils import get_time, subset
 from tqdm import tqdm
 import pandas as pd

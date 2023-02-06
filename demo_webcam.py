@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from matplotlib.animation import FuncAnimation
 import matplotlib.pyplot as plt
 import tensorflow as tf
