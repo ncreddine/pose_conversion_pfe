@@ -9,12 +9,19 @@ Membres du goupe :
 
 ---
 ## Intro
-The main subject of this repository is to build a model that predicts the upper body 3D pose from 2D pose for ISIR's  [virtual agent](https://github.com/isir/greta).
+The main subject of this repository is to build a neural network model that predicts the upper body 3D pose from 2D pose. This work is designed to fit for ISIR's  [virtual agent](https://github.com/isir/greta).
 
 Our work is structured as so :
 - Data preparation
 - Training part
 - Convert the 3D pose into BVH, to feed them into the the virtual agent.
+
+
+## Demo 
+The provide demo script provides a real-time test of our the trained model directly from the webcam. You can run it by executing the following command :
+```
+./demo_webcam.py 
+```
 
 ## Integration to Greta
 
