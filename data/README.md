@@ -25,6 +25,14 @@ The data we will train our model on are the 2D poses that are included in the da
 
 To do this you need to execute 'pose.py' in order to download the video, extract the 3D pose from the intervals, and read the correspondant 2D pose in the PATS dataset. Theses data are stored inside folders that are created for each speaker in each test, train and dev set.
 
+## Skeleton adaptation
+
+
+While performing a holistic's detection using mediapipe, the model uses the other defined modules such as pose, hand, and face. 
+> https://mediapipe.dev/images/mobile/holistic_pipeline_example.jpg
+[![Alt text](https://assets.digitalocean.com/articles/alligator/boo.svg)](https://digitalocean.com)
+In fact,  these causes some differences between the body and hands landmarks. In fact, t
+First, the shift between the hands and the whole body, while performing separate estimations using hand and pose modules, the output landmarks are merged into the hollistic's output. 
 
 
 ---
