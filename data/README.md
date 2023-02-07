@@ -28,11 +28,10 @@ To do this you need to execute 'pose.py' in order to download the video, extract
 ## Skeleton adaptation
 
 
-While performing a holistic's detection using mediapipe, the model uses the other defined modules such as pose, hand, and face. 
-> https://mediapipe.dev/images/mobile/holistic_pipeline_example.jpg
-[![Alt text](https://assets.digitalocean.com/articles/alligator/boo.svg)](https://digitalocean.com)
-In fact,  these causes some differences between the body and hands landmarks. In fact, t
-First, the shift between the hands and the whole body, while performing separate estimations using hand and pose modules, the output landmarks are merged into the hollistic's output. 
+While performing a holistic's detection using mediapipe, the model uses the other defined modules such as pose, hand, and face, and assemble their outputs into one structure. This is shown by the following diagram from mediapipe's site :
+<img src="https://mediapipe.dev/images/mobile/holistic_pipeline_example.jpg"  width="60%" height="60%">
+
+In fact, this step causes an offset and scale difference between hands and body. First the offset is between the hand root and wrist points, since the hand detector performs a depth estimation that is centerd at 0. This could be fixed by translating the hand origin to the wrist. The second difference is in the depth scale between the hand and the body, since the two estimations aren't related, it arent at the same scale, we rescale the hand.
 
 
 ---
