@@ -36,10 +36,15 @@ The second script `pose.py` does the data extraction part. Where its role is to 
 ### Skeleton adaptation
 
 A major point in this part is to match the holistic's skelton with PATS's skeleton. Since these two algorithms don't agree onto the same format (same joints have sometimes different indecies), we need to adapt a **skeleton conversion** from mediapipe's to a PATS-like skeleton.
+
+<p align="center">
+   <img src="./mediapipe_pats.jpg"  width="60%" height="60%">
+</p>
  
 While performing a holistic's detection using mediapipe, the model uses the other defined modules such as pose, hand, and face, and assemble their outputs into one structure. This is shown by the following diagram from mediapipe's site :
-<img src="https://mediapipe.dev/images/mobile/holistic_pipeline_example.jpg"  width="60%" height="60%">
-
+<p align="center">
+  <img src="https://mediapipe.dev/images/mobile/holistic_pipeline_example.jpg"  width="60%" height="60%">
+</p>
 In fact, this step causes an offset and scale difference between hands and body. First the offset is between the hand root and wrist points, since the hand detector performs a depth estimation that is centerd at 0. This could be fixed by translating the hand origin to the wrist. The second difference is in the depth scale between the hand and the body, since the two estimations aren't related, it arent at the same scale, we rescale the hand.
 
 
