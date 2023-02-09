@@ -5,3 +5,5 @@ yt-dlp
 moviepy
 ffmpeg-python
 tqdm
+argparse
+argcomplete
