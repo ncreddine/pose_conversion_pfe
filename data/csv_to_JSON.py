@@ -56,7 +56,7 @@ def sort_to_json(path_to_intervals, path_to_missing_intervals, output_file ):
                 for _speaker in speakers :
                     pbar2.set_description(_speaker)
                     speaker_df = subset(dataset_df ,'speaker', _speaker)
-                    links_df = np.unique(dataset_df['video_link']) ; 
+                    links_df = np.unique(speaker_df['video_link']) ; 
                     links_dict = {}
                     # -->  links
                     with tqdm(total = len(links_df),  bar_format="{desc:<15}{percentage:3.0f}%|{bar:50}{r_bar}", leave = False, desc = 'links' ) as pbar3 :
