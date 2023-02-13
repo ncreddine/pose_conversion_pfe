@@ -75,8 +75,8 @@ def get_timedelta(isoformat):
     hour, minute , second =  list(map(int, s.split(":")))
     return timedelta(minutes = minute, seconds = second, microseconds = microsecond)
 
-# exluded_speakers = ["seth", "angelica", "almaram", "chemistry", "conan", "ellen", "jon" , "oliver", "shelly", "rock", "maher"]
 exluded_speakers = ["almaram", "angelica", "chemistry"]
+
 class Dataset :
     def __init__(self, filename, path_to_data, data_storage) :
         # Mediapipe pose
@@ -105,13 +105,13 @@ class Dataset :
         if not trainset.exists() : trainset.mkdir()
         self.build_subset(trainset, 'train')
         # Build dev
-        # devset   = dataset / 'dev' 
-        # if not devset.exists() : devset.mkdir()
-        # self.build_subset(devset, 'dev')
+        devset   = dataset / 'dev' 
+        if not devset.exists() : devset.mkdir()
+        self.build_subset(devset, 'dev')
         # Build test
-        # testset  = dataset / 'test';
-        # if not testset.exists() : testset.mkdir()
-        # self.build_subset(testset, 'test')
+        testset  = dataset / 'test';
+        if not testset.exists() : testset.mkdir()
+        self.build_subset(testset, 'test')
 
     def build_subset(self, subset, name_subset) :
         # Each speaker
@@ -120,7 +120,6 @@ class Dataset :
             for speaker in self.data[name_subset] :
                 if not speaker in exluded_speakers :
                     pbar.set_description(speaker)
-                    # self.for_speaker("seth", subset, name_subset)
                     self.for_speaker(speaker, subset, name_subset)
             pbar.close()
 
@@ -133,9 +132,10 @@ class Dataset :
         # Loop through each links
         for ind, link in enumerate(tqdm(link_set, desc = 'Links', bar_format="{desc:<15}{percentage:3.0f}%|{bar:50}{r_bar}", leave = False)) :
             # Download Youtube video
-            filename = f'{subset.name}_{speaker}_link{ind}'
+            url, filename = link.split("||")
             VIDEO_PATH = os.path.join(self._downloads, filename )
-            downloaded = download_video(link, VIDEO_PATH)
+            downloaded = download_video(url, VIDEO_PATH)
+            break
             if not downloaded :
                 f = open(speaker_ / "bronken_links.log", "a")
                 f.write(f"[BROKEN LINK] {link}\n")
@@ -243,7 +243,7 @@ class Dataset :
         return new_pose 
 #
     def normalize_pose(self,pose):
-        scale =  length(pose[4] - pose[1])
+        scale =  np.linalg.norm(pose[4] - pose[1])
         return (pose - pose[0]) / scale
 
     def get_coord(self, results):
@@ -265,13 +265,10 @@ class Dataset :
     def get_2dpose(self, speaker, interval_id) :
         path_pose_2d = self.path_to_data / f'{speaker}/pats/data/processed/{speaker}' / f'{interval_id}.h5'
         pose_2d = h5py.File(path_pose_2d)
-        data = pose_2d['pose']['data']        # data = data + data[0]
+        data = pose_2d['pose']['data'] 
         return data
 
-
-def length(A):
-    return np.linalg.norm(A)
-
-# dataset = Dataset("./metadata.json", "/media/holdee/MyPassport/PATS", ".")
-dataset = Dataset("./metadata.json", "/media/holdee/MyPassport/PATS", "/media/holdee/MyPassport/")
-# dataset = Dataset("./metadata.json", "/home/holdee/Documents/M2/PFE/conversion/", ".")
+if __name__ == "__main__" :
+    dataset = Dataset("./sorted.json", "/media/holdee/MyPassport/PATS", ".")
+    # dataset = Dataset("./sorted.json", "/media/holdee/MyPassport/PATS", "/media/holdee/MyPassport/")
+    # dataset = Dataset("./metadata.json", "skhome/holdee/Documents/M2/PFE/conversion/", ".")
