@@ -111,7 +111,7 @@ class Demo :
             else :
                 self.anim = FuncAnimation(self.fig, self.animate, frames=len(self.frame_reader_), interval=1, blit = False, repeat = False)
                 plt.pause(0)
-            plt.show()
+                plt.show()
 
     def animate(self, i):
         """ animation on each frame """
