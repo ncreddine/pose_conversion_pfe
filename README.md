@@ -20,7 +20,8 @@ Our work is structured as so :
 ## Demo 
 In order to evaluate our script we provided a `demo.py` script that compares between 3D extracted skeleton ground truth and the 2D to 3D conversion model (the 2D skeleton we need for this task is also the 3D ground truth skeleon without the depth information). In order to evaluate the model efficiently, the demo script takes in consideretion input from the webcam and from the PATS dataset itself (cool right!), theses different tasks could be specified using arguments passed to the script.
 
-### webcam
+### webcam
+
 
 ```
 ./demo.py --model path/to/model.tflite
@@ -28,7 +29,7 @@ In order to evaluate our script we provided a `demo.py` script that compares bet
           --webcam
 ```
 
-### PATS
+### PATS
 
 ```
 ./demo.py --model path/to/model.tflite
