@@ -51,6 +51,11 @@ To perform a demo on PATS Dataset, the script reads from the `sorted.json` video
           --save
 ```
 
+### Results
+
+<p align="center">
+   <img src="./demo_.gif"  width="80%" height="80%">
+</p>
 
 ## Integration to Greta
 
