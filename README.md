@@ -18,10 +18,38 @@ Our work is structured as so :
 
 
 ## Demo 
-The provide demo script provides a real-time test of our the trained model directly from the webcam. You can run it by executing the following command :
+In order to evaluate our script we provided a `demo.py` script that compares between 3D extracted skeleton ground truth and the 2D to 3D conversion model (the 2D skeleton we need for this task is also the 3D ground truth skeleon without the depth information). In order to evaluate the model efficiently, the demo script takes in consideretion input from the webcam and from the PATS dataset itself (cool right!), theses different tasks could be specified using arguments passed to the script.
+
+### webcam
+
 ```
-./demo_webcam.py 
+./demo.py --model path/to/model.tflite
+          --num_threads 6 (default 6)
+          --webcam
 ```
+
+### PATS
+
+```
+./demo.py --model path/to/model.tflite
+          --num_threads 6 (default 6)
+          --from_json path/to/sorted.json
+          --set (train/dev/test)
+          --speaker (from 22 speakers)
+          --video (video title of the speaker)
+          --interval (annotated intervals of the video)
+```
+To perform a demo on PATS Dataset, the script reads from the `sorted.json` video intervals that contains poses.
+```
+./demo.py --model models/linear_model.tflite  \
+          --from_json data/sorted.json \
+          --set test \
+          --speaker oliver \
+          --video Marketing_to_Doctors__Last_Week_Tonight_with_John_Oliver_HBO-YQZ2UeOTO3I.mkv \
+          --interval 101665 \
+          --save
+```
+
 
 ## Integration to Greta
 
