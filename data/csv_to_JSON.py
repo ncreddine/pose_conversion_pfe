@@ -56,13 +56,15 @@ def sort_to_json(path_to_intervals, path_to_missing_intervals, output_file ):
                 for _speaker in speakers :
                     pbar2.set_description(_speaker)
                     speaker_df = subset(dataset_df ,'speaker', _speaker)
-                    links_df = np.unique(speaker_df['video_link']) ; 
+                    links_df = np.unique(speaker_df['video_link']) 
                     links_dict = {}
                     # -->  links
                     with tqdm(total = len(links_df),  bar_format="{desc:<15}{percentage:3.0f}%|{bar:50}{r_bar}", leave = False, desc = 'links' ) as pbar3 :
                         for video_link in links_df :
+                            video_fn = subset(speaker_df ,'video_link', video_link)['video_fn']
+                            video_fn = np.unique(video_fn)[0]
                             timecodes = filter_timecodes(speaker_df, video_link, missing)
-                            if len(timecodes) != 0 : links_dict.update({video_link : timecodes})
+                            if len(timecodes) != 0 : links_dict.update({'||'.join([video_link, video_fn]) : timecodes})
                             pbar3.update(1)
                     if len(links_dict) != 0 : speaker_dict.update({ _speaker : links_dict })
                     pbar2.update(1)
