@@ -51,10 +51,10 @@ def get_timedelta(isoformat):
     hour, minute , second =  list(map(int, s.split(":")))
     return timedelta(minutes = minute, seconds = second, microseconds = microsecond)
 
-def draw_poses(ax, ar,  pose, default_skeleton, color, label):
+def draw_poses(ax, ar,  pose, default_skeleton, color):
     data = pose.reshape(52,3)
     x_, y_, z_ = data.T
-    artist = ax.scatter(x_, z_, y_,  s = 10, color = color, label = label)
+    artist = ax.scatter(x_, z_, y_,  s = 10, color = color)
     ar.append(artist)
     for origin, end in default_skeleton :
         x, y , z   = data[end]
@@ -132,10 +132,10 @@ class Demo :
             # Convert skeleton
             pose_image  = self.adapt_skeleton(_pose3d, _handR, _handL, image.shape)
             gt  = self.normalize_pose(pose_image)
-            gt_2d  = data[:,:2].reshape(1, 52, 2)
+            gt_2d  = gt[:,:2].reshape(1, 52, 2)
             predicted = self.infer_model(gt_2d)
 
-            self.axis[1], _ = draw_poses(self.axis[1], [], gt_2d.flatten(), skeleton_connections(), color = "blue")
+            self.axis[1], _ = draw_poses(self.axis[1], [], gt.flatten(), skeleton_connections(), color = "blue")
             self.axis[2], _ = draw_poses(self.axis[2], [], predicted, skeleton_connections(), color = "red")
             self.axis[1].set_title("mediapipe")
             self.axis[2].set_title("2D to 3D conversion")
@@ -289,7 +289,7 @@ if __name__ == '__main__':
     from stonesoup.reader.video import VideoClipReader
     from datetime import timedelta
     import cv2 as cv
-    from utils import skeleton_connections
+    from data.utils import skeleton_connections
     # init and launch
     demo = Demo(args)
     demo.start()
