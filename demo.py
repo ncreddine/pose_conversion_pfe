@@ -103,12 +103,14 @@ class Demo :
         if self.args.webcam :
             self.anim = FuncAnimation(self.fig, self.animate,interval = 1, blit = False)
             plt.pause(0)
-        elif self.args.from_json :
-            self.anim = FuncAnimation(self.fig, self.animate, frames=len(self.frame_reader_), interval=1, blit = False, repeat = False)
-            plt.pause(0)
+        elif self.args.from_json is not None :
             if self.args.save :
+                self.anim = FuncAnimation(self.fig, self.animate, frames=len(self.frame_reader_), interval=1, blit = False, repeat = False)
                 writer = animation.FFMpegWriter(fps=25, metadata=dict(artist='Me'), bitrate=1800)
                 self.anim.save('./mydemo.mp4', writer = writer)
+            else :
+                self.anim = FuncAnimation(self.fig, self.animate, frames=len(self.frame_reader_), interval=1, blit = False, repeat = False)
+                plt.pause(0)
             plt.show()
 
     def animate(self, i):
@@ -116,6 +118,7 @@ class Demo :
         self.axis[0].clear()
         self.axis[0].set_xticks([])
         self.axis[0].set_yticks([])
+        self.axis[0].set_title(f"{i}/{len(self.frame_reader_)}")
         self.clear_axis(self.axis[1])
         self.clear_axis(self.axis[2])
 
