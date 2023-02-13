@@ -124,7 +124,7 @@ class Demo:
         _handL  += [1, 1, _pose3d[15,2]]
         #  create new list
         new_pose = []
-        #  add neck
+        #  add 'Neck'
         new_pose.append((_pose3d[11] + _pose3d[12])/2)
         #  add 'RShoulder', 'RElbow', 'RWrist', 
         new_pose.append(_pose3d[12]); new_pose.append(_pose3d[14]); new_pose.append(_pose3d[16]);
