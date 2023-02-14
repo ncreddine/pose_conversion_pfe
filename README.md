@@ -41,6 +41,8 @@ The provided  `demo.py` script compares between 3D extracted skeleton ground tru
           --interval (annotated intervals of the video)
 ```
 
+### Argcomplete
+
 To perform a demo on PATS Dataset, the script first need's to download the video using the provided links in the `sorted.json` and then select the right interval where pose is annotated. All these parameters must be provided by the user manually , first, selecting the dataset (train, test, dev)_set_, the _speaker_, _video_ and then the _interval_. To make user's experience more ergonomic, the demo script comes with an argument completer module, provided by the `argcomplete` python library. This module dynamically offers suggestions to find out which argument you're looking for. This is very useful when selecting an interval from the JSON file.
 
 To use the argcomplete on the termianal, follow the installation guide [here](https://github.com/kislyuk/argcomplete#installation) :
@@ -79,7 +81,7 @@ To use it, first select the path to the `sorted.json` file using **`--from_json`
           --save
 ```
 
-### Results
+## Results
 
 <p align="center">
    <img src="./demo_.gif"  width="80%" height="80%">
