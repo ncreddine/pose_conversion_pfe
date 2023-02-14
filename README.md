@@ -14,11 +14,11 @@ The main subject of this repository is to build a neural network model that pred
 Our work is structured as so :
 - Data preparation
 - Training part
-- Convert the 3D pose into BVH, to feed them into the the virtual agent.
+- Convert the 3D pose into BVH, to feed them into the virtual agent.
 
 
 ## Demo 
-In order to evaluate our script we provided a `demo.py` script that compares between 3D extracted skeleton ground truth and the 2D to 3D conversion model (the 2D skeleton we need for this task is also the 3D ground truth skeleon without the depth information). In order to evaluate the model efficiently, the demo script takes in consideretion input from the webcam and from the PATS dataset itself (cool right!), theses different tasks could be specified using arguments passed to the script.
+The provided  `demo.py` script compares between 3D extracted skeleton ground truth and the 2D to 3D conversion model (the 2D skeleton we need for this task is also the 3D ground truth skeleton without the depth information). To evaluate the model efficiently, the demo script takes in consideration input from the webcam and from the PATS dataset itself (cool right!), theses different tasks could be specified using arguments passed to the script.
 
 ### webcam
 
@@ -40,7 +40,35 @@ In order to evaluate our script we provided a `demo.py` script that compares bet
           --video (video title of the speaker)
           --interval (annotated intervals of the video)
 ```
-To perform a demo on PATS Dataset, the script reads from the `sorted.json` video intervals that contains poses.
+
+To perform a demo on PATS Dataset, the script first need's to download the video using the provided links in the `sorted.json` and then select the right interval where pose is annotated. All these parameters must be provided by the user manually , first, selecting the dataset (train, test, dev)_set_, the _speaker_, _video_ and then the _interval_. To make user's experience more ergonomic, the demo script comes with an argument completer module, provided by the `argcomplete` python library. This module dynamically offers suggestions to find out which argument you're looking for. This is very useful when selecting an interval from the JSON file.
+
+To use the argcomplete on the termianal, follow the installation guide [here](https://github.com/kislyuk/argcomplete#installation) :
+
+>  **Note**
+>  
+>  For my env I had to install it using `root` :
+>  ```
+>  sudo pip3 install argcomplete
+>  sudo activate-global-python-argcomplete --dest=/etc/bash_completion.d/
+>  ```
+>  after that copying the following line to the `.bashrc`
+>  ```
+>  eval "$(register-python-argcomplete path/to/demo.py)"
+>  ```
+>  or, execute the following command in the repository folder :
+>  ```
+>  echo "eval \"\$(register-python-argcomplete \$(realpath ./demo.py))\"" >> ~/.bashrc
+>  ```
+>  And last :
+>  ```
+>  source ~/.bashrc
+>  ```
+
+
+
+To use it, first select the path to the `sorted.json` file using **`--from_json`** argument, after that select of the _set_ using the **`--set`**, here the program proposes 3 choices : train, test and dev (By pressing `<TAB>`) . After the set coms the **`--speaker`** argument, here the program searchs through all available speaker in that particular (By pressing `<TAB>` again)... The scirpt does the same search for the videos and for the intervals, respectivly, with **`--video`** and **`--interval`**
+
 ```
 ./demo.py --model models/linear_model.tflite  \
           --from_json data/sorted.json \
