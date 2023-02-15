@@ -72,13 +72,8 @@ To use the argcomplete on the termianal, follow the installation guide [here](ht
 To use it, first select the path to the `sorted.json` file using **`--from_json`** argument, after that select of the _set_ using the **`--set`**, here the program proposes 3 choices : train, test and dev (By pressing `<TAB>`) . After the set parameter, comes the **`--speaker`** argument, here the program searches through all available speaker in that particular (By pressing `<TAB>` again)... The  program does the same thing for the video and for the interval's argument, respectively, with **`--video`** and **`--interval`**
 
 ```
-./demo.py --model models/linear_model.tflite  \
-          --from_json data/sorted.json \
-          --set test \
-          --speaker oliver \
-          --video Marketing_to_Doctors__Last_Week_Tonight_with_John_Oliver_HBO-YQZ2UeOTO3I.mkv \
-          --interval 101665 \
-          --save
+./demo.py --model models/linear_model.tflite --from_json data/sorted.json --set test --speaker oliver --video Marketing_to_Doctors_-_Last_Week_Tonight_with_John_Oliver_HBO-YQZ2UeOTO3I.mkv --interval 101148
+
 ```
 
 ## Results
