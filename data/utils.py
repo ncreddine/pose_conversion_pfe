@@ -1,13 +1,52 @@
 from datetime import time, timedelta
+from yt_dlp import YoutubeDL
 
+def download_video(url, filename):
+    """ Video Downloader """
+    ydl_opts = {
+        "no_warnings": True,
+        "quiet" : 1,
+        'logtostderr' : True,
+        "noprogress": False,
+        "outtmpl" : filename
+    }
+    with YoutubeDL(ydl_opts) as ydl:
+        ydl.download(url)
+
+def draw_skeleton(ax, ar,  pose, default_skeleton, color):
+    """ Skeleton drawing util
+        @param :
+            ax : matplotlib axis 
+            ar : artists array, useful when using matplotlib.animation.ArtistAnimation
+            pose : pose joints coordinates, numpy.ndarray(shape = (52,3))
+            default_skeleton : skeleton links, between each joint
+            color : plot color 
+        ---------
+        @return :
+            ax : maptlotlib axis 
+            ar : updated artists list
+    """
+    data = pose.reshape(52,3)
+    # Plot joints using scatter
+    x_, y_, z_ = data.T
+    artist = ax.scatter(x_, z_, y_,  s = 10, color = color) # invert drawing axis (x, z, y) instead of (x, y, z)
+    ar.append(artist)
+    # Plot links using plot
+    for origin, end in default_skeleton :
+        x, y , z   = data[origin]
+        xx, yy, zz = data[end]
+        line, = ax.plot([x, xx],[z, zz],[y,yy], color = color,  linewidth = 2)
+        ar.append(line)
+    return ax, ar
 
 def subset(df, column, key) :
+    """ Select a subset that verifies a condition """
     return df[df[column] == key]
 
 
 
 def get_time(isoformat):
-    """ Creates a time object from the ISOformat (used for `start_time` and `end_time`)
+    """ Creates a time object from the ISOformat 
         @param  : str ISOformat (hh:mm:ss.sss)
         ---------
         @return : time object
@@ -23,6 +62,21 @@ def get_time(isoformat):
     microsecond = min( int(microsecond) , time.max.microsecond)
     hour, minute , second =  list(map(int, s.split(":")))
     return time(hour, minute, second, microsecond).isoformat()
+
+def deltatime(isoformat):
+    """ Converts to timedelta object from the ISOformat (used for `start_time` and `end_time`)
+        @param  : str ISOformat (hh:mm:ss.sss)
+        ---------
+        @return : timedelta object
+    """
+    try :
+        s, microsecond = isoformat.split(".")
+    except :
+        s = isoformat
+        microsecond = 0
+    microsecond = min( int(microsecond) , timedelta.max.microseconds)
+    hour, minute , second =  list(map(int, s.split(":")))
+    return timedelta(minutes = minute, seconds = second, microseconds = microsecond)
 
 
 def speakers() :
